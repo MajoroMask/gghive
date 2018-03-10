@@ -10,9 +10,14 @@ ggplot() +
         color = alpha("black", 0.2), size = 0.5, linetype = 2, 
         show.legend = FALSE
     ) +
-    geom_text(  # grid label
-        aes(x, y, label = label), df, size = 2, 
+    geom_label(  # grid label
+        aes(x, y, label = label), lp$df_grid_major_label, size = 2, 
         color = alpha("black", 0.5), 
+        show.legend = FALSE
+    ) + 
+    geom_label(  # grid label
+        aes(x, y, label = label), lp$df_grid_minor_label, size = 2, 
+        color = alpha("black", 0.3), 
         show.legend = FALSE
     ) + 
     geom_segment(  # axis line
@@ -33,16 +38,7 @@ ggsave("test.pdf", scale = 2)
 
 # test plotly & htmlwidgets
 
-pp <- ggplotly(p, layerData = 4)
-saveWidget(pp, file = "test.html")
+# pp <- ggplotly(p, layerData = 4)
+# saveWidget(pp, file = "test.html")
 
 # test zone
-df <- rbind(lp$df_grid_major, lp$df_grid_minor) %>% 
-    extract(.$degree == 131, )
-df <- by(
-    df, df$group, function(df_sub) {
-        df_sub[which.max(df_sub$y), ]
-    }, simplify = FALSE
-) %>% do.call(rbind, .) %>% extract(order(.$x), )
-df$y[df$degree != 0] %<>% signif(, digits = 3)
-
