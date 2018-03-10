@@ -1,7 +1,4 @@
-# function ----
-library(grid)
-library(ggplot2)
-
+# functions ----
 ggname <- function(prefix, grob) {
     grob$name <- grobName(grob, prefix)
     grob
