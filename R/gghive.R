@@ -2,10 +2,10 @@
 gghive <- function(
     df_e, df_v,
     directed = TRUE, method = "rmw",
-    e_size = "w", 
-    v_y = "degree", 
+    e_size, v_y, 
     n_axis = NULL, axis_dup = NULL, axis_jit = 0.05, y_expand = 0.05, 
-    axis_normalize = FALSE, axis_rank = FALSE, bezier_jit = 0.1, 
+    axis_normalize = FALSE, axis_rank = FALSE, 
+    bezier_jit_out = 0.1, bezier_jit_in = 0.2, 
     grid_cut = 360, label_rel_pos = 90, 
     ...
 ) {
@@ -60,7 +60,8 @@ gghive <- function(
     
     # bezier curve
     df_bezier <- bezier_transfer(
-        dfe, dfv, n_axis = n_axis, bezier_jit = bezier_jit
+        dfe, dfv, n_axis = n_axis, 
+        bezier_jit_in = bezier_jit_in, bezier_jit = bezier_jit_out
     )
     
     # axis and panel grid line
@@ -202,7 +203,10 @@ coord_transfer <- function(
         df
     } else if (identical(task, "grid_major") | identical(task, "grid_minor")) {
         if (axis_rank | axis_normalize) {
-            warning("grid can not be used in normalized or ranked axis")
+            warning(
+                "grid can not be used in normalized or ranked axis, ", 
+                "NULL will be returned."
+            )
             return(NULL)
         }
         
@@ -240,7 +244,7 @@ coord_transfer <- function(
         dfv
     }
 }
-bezier_transfer <- function(dfe, dfv, n_axis, bezier_jit) {
+bezier_transfer <- function(dfe, dfv, n_axis, bezier_jit_in, bezier_jit) {
     
     csin <- function(x, y, n_axis) {
         sin(2 * pi * x / n_axis) * y
@@ -261,7 +265,10 @@ bezier_transfer <- function(dfe, dfv, n_axis, bezier_jit) {
         y4 = dfv[dfe$.to_fix, ".y"],
         stringsAsFactors = FALSE
     )
-    t1 <- dfe$.axis_ori_from == 1 & dfe$.axis_ori_to == 3
+    t1 <- 
+        dfe$.axis_ori_from == min(dfe$.axis_ori_from) & 
+        dfe$.axis_ori_to == max(dfe$.axis_ori_to)
+    t2 <- dfe$.axis_ori_from == dfe$.axis_ori_to
     
     df_sub <- dfe[t1, ]
     xa <- dfv[df_sub$.from_fix, ".axis"]
@@ -282,6 +289,16 @@ bezier_transfer <- function(dfe, dfv, n_axis, bezier_jit) {
     df$y2[!t1] <- ccos((xa + abs(xa - xb) * bezier_jit) - 1, ya, n_axis)
     df$x3[!t1] <- csin((xb - abs(xa - xb) * bezier_jit) - 1, yb, n_axis)
     df$y3[!t1] <- ccos((xb - abs(xa - xb) * bezier_jit) - 1, yb, n_axis)
+    
+    df_sub <- dfe[t2, ]
+    xa <- dfv[df_sub$.from_fix, ".axis"]
+    xb <- dfv[df_sub$.to_fix, ".axis"]
+    ya <- dfv[df_sub$.from_fix, ".y_mod"]
+    yb <- dfv[df_sub$.to_fix, ".y_mod"]
+    df$x2[t2] <- csin((xa + abs(xa - xb) * bezier_jit_in) - 1, ya, n_axis)
+    df$y2[t2] <- ccos((xa + abs(xa - xb) * bezier_jit_in) - 1, ya, n_axis)
+    df$x3[t2] <- csin((xb - abs(xa - xb) * bezier_jit_in) - 1, yb, n_axis)
+    df$y3[t2] <- ccos((xb - abs(xa - xb) * bezier_jit_in) - 1, yb, n_axis)
     
     df_x <- reshape2::melt(
         cbind(dfe, df[, c(".id", "x1", "x2", "x3", "x4")]), 
