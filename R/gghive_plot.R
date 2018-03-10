@@ -6,21 +6,27 @@ gghive_plot <- function(
     ...
 ) {
     # arguments
-    if (method == "rmw") {
-        if (is.null(panel_grid_major)) {
-            panel_grid_major <- TRUE
-        }
-        if (is.null(panel_grid_minor)) {
-            panel_grid_minor <- TRUE
-        }
-        if (is.null(panel_grid_major_label)) {
-            panel_grid_major_label <- TRUE
-        }
-        if (is.null(panel_grid_minor_label)) {
-            panel_grid_minor_label <- TRUE
-        }
+    if (is.null(panel_grid_major) & !is.null(lp$df_grid_major)) {
+        panel_grid_major <- TRUE
+    } else {
+        panel_grid_major <- FALSE
     }
-    # TODO
+    if (is.null(panel_grid_minor) & !is.null(lp$df_grid_minor)) {
+        panel_grid_minor <- TRUE
+    } else {
+        panel_grid_minor <- FALSE
+    }
+    if (is.null(panel_grid_major_label) & !is.null(lp$df_grid_major_label)) {
+        panel_grid_major_label <- TRUE
+    } else {
+        panel_grid_major_label <- FALSE
+    }
+    if (is.null(panel_grid_minor_label) & !is.null(lp$df_grid_minor_label)) {
+        panel_grid_minor_label <- TRUE
+    } else {
+        panel_grid_minor_label <- FALSE
+    }
+    
     # plot
     p <- ggplot()
     if (panel_grid_major) {  # major grid line
