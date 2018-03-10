@@ -11,6 +11,7 @@ gghive <- function(
     n_axis = NULL, axis_dup = NULL, axis_jit = 0.05, y_expand = 0.05,
     axis_normalize = FALSE, axis_rank = FALSE, bezier_jit = 0.1, 
     grid_cut = 360, label_rel_pos = 90, 
+    # grid_label_major = TRUE, grid_label_minor = TRUE, 
     ...
 ) {
     require(magrittr)
@@ -87,9 +88,8 @@ gghive <- function(
                 df_grid_major$y <= max(df_bezier$coord_y), 
             ]
         df_grid_major <- fix_grid_df(df_grid_major, grid_cut = grid_cut)
-        browser()
-        # TODOTODO
-        df_grid_major_label
+        df_grid_major_label <- 
+            df_grid_major[df_grid_major$degree == label_rel_pos, ]
     }
     
     df_grid_minor <- coord_transfer(
@@ -107,12 +107,15 @@ gghive <- function(
                 df_grid_minor$y <= max(df_bezier$coord_y), 
             ]
         df_grid_minor <- fix_grid_df(df_grid_minor, grid_cut = grid_cut)
+        df_grid_minor_label <- 
+            df_grid_minor[df_grid_minor$degree == label_rel_pos, ]
     }
-    # browser()
     
     list(
         dfe = dfe, dfv = dfv, df_bezier = df_bezier, df_axis = df_axis, 
-        df_grid_major = df_grid_major, df_grid_minor = df_grid_minor
+        df_grid_major = df_grid_major, df_grid_minor = df_grid_minor, 
+        df_grid_major_label = df_grid_major_label, 
+        df_grid_minor_label = df_grid_minor_label
     )
 }
 duplicate_row <- function(dfv, axis_dup, axis_jit) {
@@ -318,6 +321,6 @@ df_vertices$closeness <- g %>% closeness()
 lp <- gghive(  # short for list_plot
     df_edges, df_vertices, 
     # v_y = "betweenness", bezier_jit = 0.25, axis_jit = 0.15, 
-    what = "place_holder"
+    what = "place_holder", label_rel_pos = 180
 )
 
