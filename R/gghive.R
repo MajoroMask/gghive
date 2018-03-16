@@ -186,7 +186,11 @@ coord_transfer <- function(
         norm_num <- function(x) {(x - min(x)) / (max(x) - min(x))}
         y <- unlist(by(y, x_fctr, norm_num))
     }
-    y <- (y - min(y)) / (max(y) - min(y)) + y_expand
+    if (!identical(min(y), max(y))) {
+        y <- (y - min(y)) / (max(y) - min(y)) + y_expand
+    } else {
+        y <- y + y_expand
+    }
     y_min <- min(y)
     y_max <- as.numeric(by(y, x_fctr, max))
     
@@ -214,16 +218,20 @@ coord_transfer <- function(
         # major and minor labels
         lb_ma <- pretty(y, h = 2)
         lb_mi <- pretty(y)[!pretty(y) %in% lb_ma]
-        if (length(lb_mi) == 0) {
-            lb_mi <- pretty(y, h = 0.5)[!pretty(y, h = 0.5) %in% lb_ma]
-        }
         
         if (identical(task, "grid_major")) {
             lbs <- lb_ma
         } else if (identical(task, "grid_minor")) {
             lbs <- lb_mi
         }
-        y <- (lbs - min(y)) / (max(y) - min(y)) + y_expand
+        if (length(lbs) == 0) {
+            return(NULL)
+        }
+        if (!identical(min(y), max(y))) {
+            y <- (lbs - min(y)) / (max(y) - min(y)) + y_expand
+        } else {
+            y <- lbs + y_expand
+        }
         l_df <- mapply(
             function(y_sub, lb, grid_cut) {
                 data.frame(

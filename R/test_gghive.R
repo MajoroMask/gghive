@@ -18,14 +18,16 @@ lp <- gghive(  # short for list_plot
     df_edges, df_vertices, 
     # label_rel_pos = 135, 
     # axis_normalize = FALSE, axis_rank = TRUE, 
-    # v_y = "degree",
-    v_y = "betweenness",
-    # v_y = "closeness", 
-    # v_y = "cc", 
-    # v_y = "branching", 
+    v_axis = ""
+    v_y = "degree",
+    # v_y = "betweenness",
+    # v_y = "closeness",
+    # v_y = "cc",
+    # v_y = "branching",
     e_size = "w", 
-    bezier_jit_in = 0.4, 
+    bezier_jit_in = 0.4, axis_jit = 0.1, 
     what = "place_holder"
 )
 p <- gghive_plot(lp)
 p
+ggsave("test.pdf", p, scale = 2)

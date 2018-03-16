@@ -1,6 +1,7 @@
 # plot function
 gghive_plot <- function(
     lp, method = "rmw", 
+    plot_point = TRUE, plot_bezier = TRUE, plot_axis = TRUE, 
     panel_grid_major = NULL, panel_grid_minor = NULL, 
     panel_grid_major_label = NULL, panel_grid_minor_label = NULL, 
     ...
@@ -63,19 +64,26 @@ gghive_plot <- function(
                 show.legend = FALSE
             )
     }
+    if (plot_axis) {  # axis line
+        p <- p + 
+            geom_segment(
+                aes(.x, .y, xend = .xend, yend = .yend), lp$df_axis, 
+                show.legend = FALSE
+            )
+    }
     p <- p + 
-        geom_segment(  # axis line
-            aes(.x, .y, xend = .xend, yend = .yend), lp$df_axis, 
-            show.legend = FALSE
-        ) +
         geom_bezier(  # edge line
             aes(.coord_x, .coord_y, group = .id, alpha = .e_size), 
             lp$df_bezier, show.legend = FALSE
-        ) + 
-        geom_point(
-            aes(.x, .y, color = as.factor(.axis_ori)), lp$dfv, 
-            show.legend = FALSE
-        ) +
+        )
+    if (plot_point) {
+        p <- p + 
+            geom_point(
+                aes(.x, .y, color = as.factor(.axis_ori)), lp$dfv, 
+                show.legend = FALSE
+            )
+    }
+    p <- p + 
         theme_hive() +
         coord_fixed()
 }
