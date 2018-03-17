@@ -3,11 +3,13 @@ library(igraph)
 library(grid)
 library(ggplot2)
 
-df_ori <- "lemis.txt" %>% read.delim(stringsAsFactors = FALSE) %>%
-    set_colnames(c("x", "y", "w"))
-g <- df_ori %>% graph_from_data_frame
+set.seed(123)
+g <- sample_grg(100, 0.1, torus=FALSE)
 df_edges <- g %>% as_data_frame(what = "edges")
+set.seed(123)
+df_edges$.alpha <- runif(nrow(df_edges), 3, 5)
 df_vertices <- g %>% as_data_frame(what = "vertices")
+df_vertices$id <- rownames(df_vertices)
 df_vertices$degree <- g %>% degree()
 df_vertices$betweenness <- g %>% betweenness()
 df_vertices$closeness <- g %>% closeness()
@@ -18,16 +20,18 @@ lp <- gghive(  # short for list_plot
     df_edges, df_vertices, 
     # label_rel_pos = 135, 
     # axis_normalize = FALSE, axis_rank = TRUE, 
-    v_axis = ""
+    # v_axis = ""
     v_y = "degree",
     # v_y = "betweenness",
     # v_y = "closeness",
     # v_y = "cc",
     # v_y = "branching",
-    e_size = "w", 
+    # e_size = "size", 
     bezier_jit_in = 0.4, axis_jit = 0.1, 
     what = "place_holder"
 )
 p <- gghive_plot(lp)
-p
 ggsave("test.pdf", p, scale = 2)
+ggsave("test.png", p, scale = 2)
+p_d3 <- d3_render(lp = lp)
+

@@ -2,7 +2,7 @@
 gghive <- function(
     df_e, df_v,
     directed = TRUE, method = "rmw",
-    e_size, v_y, 
+    v_x = NULL, v_y = NULL, 
     n_axis = NULL, axis_dup = NULL, axis_jit = 0.05, y_expand = 0.05, 
     axis_normalize = FALSE, axis_rank = FALSE, 
     bezier_jit_out = 0.1, bezier_jit_in = 0.2, 
@@ -28,8 +28,8 @@ gghive <- function(
     colnames(dfv) <- c(".name", ".y_ori")
     dfv <- cbind(df_v, dfv)
     
-    dfe <- cbind(df_e[, c(1, 2)], df_e[, e_size, drop = FALSE])
-    colnames(dfe) <- c(".from", ".to", ".e_size")
+    dfe <- df_e[, c(1, 2)]
+    colnames(dfe) <- c(".from", ".to")
     dfe <- cbind(df_e, dfe)
     
     if (identical(method, "rmw")) {  # regulator-manager-workhorse

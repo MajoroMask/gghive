@@ -73,13 +73,14 @@ gghive_plot <- function(
     }
     p <- p + 
         geom_bezier(  # edge line
-            aes(.coord_x, .coord_y, group = .id, alpha = .e_size), 
+            aes(.coord_x, .coord_y, group = .id, alpha = .alpha), 
             lp$df_bezier, show.legend = FALSE
         )
     if (plot_point) {
         p <- p + 
             geom_point(
                 aes(.x, .y, color = as.factor(.axis_ori)), lp$dfv, 
+                size = 3, 
                 show.legend = FALSE
             )
     }
