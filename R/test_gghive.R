@@ -13,14 +13,14 @@ df_vertices$id <- rownames(df_vertices)
 df_vertices$degree <- g %>% degree()
 df_vertices$betweenness <- g %>% betweenness()
 df_vertices$closeness <- g %>% closeness()
-df_vertices$cc <- g %>% transitivity()
+df_vertices$cc <- g %>% transitivity(type = "local")
 df_vertices$branching <- g %>% neighborhood.size()
 
 lp <- gghive(  # short for list_plot
     df_edges, df_vertices, 
-    # label_rel_pos = 135, 
-    # axis_normalize = FALSE, axis_rank = TRUE, 
-    # v_axis = ""
+    # axis_normalize = TRUE, 
+    # axis_rank = TRUE, 
+    v_x = "cc", 
     v_y = "degree",
     # v_y = "betweenness",
     # v_y = "closeness",

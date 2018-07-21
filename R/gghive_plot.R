@@ -79,7 +79,8 @@ gghive_plot <- function(
     if (plot_point) {
         p <- p + 
             geom_point(
-                aes(.x, .y, color = as.factor(.axis_ori)), lp$dfv, 
+                aes(.x, .y, color = as.factor(.axis_ori)), 
+                lp$dfv[lp$dfv$.axis != 0, ], 
                 size = 3, 
                 show.legend = FALSE
             )
